@@ -14,7 +14,7 @@ const SecondContainer = styled.div`
 `;
 
 const InputContainer = styled.div`
-  padding-bottom: 15px;
+  padding-bottom: 10px;
 `;
 
 const TitleInput = styled.input`
@@ -27,16 +27,20 @@ const TitleInput = styled.input`
 `;
 
 const CreateBtn = styled.div`
-  border: 2px solid #333;
   text-align: center;
   width: 100px;
   padding: 8px 0;
   color: #f9f9f9;
   background-color: #333;
-  border-bottom-width: 4px;
+  border-bottom: 4px solid #333;
   border-bottom-color: #000;
   border-radius: 2px;
   font-weight: bold;
+  cursor: pointer;
+  :active {
+    margin-top: 2px;
+    border-bottom-width: 2px;
+  }
 `;
 
 const PostTable = styled.table`

@@ -9,6 +9,13 @@
   box-sizing: border-box;
 }
 
+#app {
+  max-width: 1200px;
+  width: 100%;
+  margin: auto;
+  padding: 0 15px;
+}
+
 table {
   width: 100%;
 }

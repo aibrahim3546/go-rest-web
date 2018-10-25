@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { observer, inject } from 'mobx-react';
 import { observable, action, decorate } from 'mobx';
+import { Link } from 'react-router-dom';
 import {
   FirstContainer,
   SecondContainer,
@@ -15,12 +16,26 @@ type Props = {
 };
 
 type ObservableState = {
-  isLoading: boolean
+  isLoading: boolean,
+  isCreated: boolean
+};
+
+type PostState = {
+  author: string,
+  title: string,
+  content: string
 };
 
 class Home extends Component<Props> {
   observableState: ObservableState = {
-    isLoading: true
+    isLoading: true,
+    isCreated: false
+  };
+
+  postState: PostState = {
+    author: '',
+    title: '',
+    content: ''
   };
 
   componentDidMount() {
@@ -42,10 +57,39 @@ class Home extends Component<Props> {
     });
   };
 
+  onCreatePost = () => {
+    const {
+      rootStore: { postStore }
+    } = this.props;
+    const { author, title, content } = this.postState;
+
+    const checkValidation = () => {
+      if (author && title && content) {
+        return true;
+      }
+      return false;
+    };
+
+    this.observableState.isCreated = true;
+    if (checkValidation()) {
+      this.observableState.isCreated = false;
+      postStore.createPost({
+        body: this.postState,
+        success: () => {
+          this.postState.author = '';
+          this.postState.title = '';
+          this.postState.content = '';
+        },
+        error: () => {}
+      });
+    }
+  };
+
   render() {
     const {
       rootStore: { postStore }
     } = this.props;
+    const { isCreated } = this.observableState;
     return (
       <Fragment>
         <div
@@ -65,11 +109,35 @@ class Home extends Component<Props> {
             <div style={{ paddingBottom: 15 }}>Create Post</div>
             <InputContainer>
               <div>Author:</div>
-              <TitleInput type="text" style={{ width: '50%' }} />
+              <TitleInput
+                type="text"
+                style={{ width: '50%' }}
+                onChange={e => {
+                  this.postState.author = e.target.value;
+                }}
+                value={this.postState.author}
+              />
+              <div style={{ color: 'red', fontSize: 12, height: 14.5 }}>
+                {isCreated &&
+                  !this.postState.author &&
+                  'Author field is required'}
+              </div>
             </InputContainer>
             <InputContainer>
               <div>Title:</div>
-              <TitleInput type="text" />
+              <TitleInput
+                type="text"
+                onChange={e => {
+                  this.postState.title = e.target.value;
+                }}
+                value={this.postState.title}
+                style={{ fontSize: 20 }}
+              />
+              <div style={{ color: 'red', fontSize: 12, height: 14.5 }}>
+                {isCreated &&
+                  !this.postState.title &&
+                  'Title field is required'}
+              </div>
             </InputContainer>
             <InputContainer>
               <div>Content:</div>
@@ -80,12 +148,22 @@ class Home extends Component<Props> {
                   width: '100%',
                   resize: 'none',
                   padding: 10,
-                  outline: 'none'
+                  outline: 'none',
+                  fontSize: 18
                 }}
+                onChange={e => {
+                  this.postState.content = e.target.value;
+                }}
+                value={this.postState.content}
               />
+              <div style={{ color: 'red', fontSize: 12, height: 14.5 }}>
+                {isCreated &&
+                  !this.postState.content &&
+                  'Content field is required'}
+              </div>
             </InputContainer>
             <InputContainer>
-              <CreateBtn>CREATE</CreateBtn>
+              <CreateBtn onClick={this.onCreatePost}>CREATE</CreateBtn>
             </InputContainer>
           </FirstContainer>
           <SecondContainer>
@@ -99,9 +177,11 @@ class Home extends Component<Props> {
               </thead>
               <tbody>
                 {postStore.posts.map(each => (
-                  <tr>
+                  <tr key={each.id}>
                     <td>{each.author}</td>
-                    <td>{each.title}</td>
+                    <td>
+                      <Link to={`/post/${each.id}`}>{each.title}</Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -115,7 +195,9 @@ class Home extends Component<Props> {
 
 decorate(Home, {
   observableState: observable,
-  fetchData: action
+  postState: observable,
+  fetchData: action,
+  onCreatePost: action
 });
 
 export default inject('rootStore')(observer(Home));

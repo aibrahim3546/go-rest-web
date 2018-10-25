@@ -8,6 +8,7 @@ import App from './App';
 import ScrollToTop from './ScrollToTop';
 
 import Home from './views/home/Home';
+import Post from './views/post/Post';
 
 export default () => (
   <Provider rootStore={rootStore}>
@@ -16,6 +17,7 @@ export default () => (
         <ScrollToTop>
           <Switch>
             <Route exact path="/" component={Home} />
+            <Route exact path="/post/:id" component={Post} />
           </Switch>
         </ScrollToTop>
       </HashRouter>
