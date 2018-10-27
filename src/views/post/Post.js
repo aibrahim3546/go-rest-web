@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import { withRouter } from 'react-router';
 import styled from 'styled-components';
-import { observable, decorate } from 'mobx';
+import { observable, decorate, action } from 'mobx';
 
 import { CreateBtn } from '../home/HomeStyle';
 import { TextArea } from './PostStyle';
@@ -49,6 +49,10 @@ class Post extends Component<Props> {
   };
 
   componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData = () => {
     const {
       rootStore: { postStore },
       match
@@ -192,6 +196,7 @@ class Post extends Component<Props> {
               }}
               onChange={e => {
                 this.postState.content = e.target.value;
+                this.observableState.contentHeight = this.contentEl.scrollHeight;
               }}
             />
           )}
@@ -216,7 +221,10 @@ class Post extends Component<Props> {
 
 decorate(Post, {
   observableState: observable,
-  postState: observable
+  postState: observable,
+  fetchData: action,
+  onEditPost: action,
+  onDeletePost: action,
 });
 
 export default withRouter(inject('rootStore')(observer(Post)));
