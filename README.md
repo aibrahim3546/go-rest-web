@@ -1,4 +1,4 @@
-## CRUD
+## ReactJS CRUD
 
 A simple CRUD with [react.js](https://reactjs.org/) and setup with [parcel](https://parceljs.org/), [axios](https://github.com/axios/axios) and [mobx](https://github.com/mobxjs/mobx).
 
